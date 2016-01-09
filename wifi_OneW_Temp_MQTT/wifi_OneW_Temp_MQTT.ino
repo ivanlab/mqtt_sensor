@@ -8,14 +8,14 @@
 #define mqttUser "admin"
 #define mqttPassword "redborder"
 #define mqttClientID  "ivanlabArduinoClient"
-#define mqttTopic "topic"
+#define mqttTopic "rBtemp"
 
 // WiFi Parameters
 char ssid[] = "ivanlab";           // your network SSID (name) 
 char pass[] = "ComputoErgoSum";    // your network password
 int status = WL_IDLE_STATUS;       // the Wifi radio's status
 IPAddress ip;                      // the IP address of your WiFi shield
-IPAddress server(10,0,150,38);   // Adress of the MQTT server
+IPAddress server(212, 72, 74, 21); // Adress of the MQTT server
 
 // Bus parameters
 #define ONE_WIRE_BUS 2   // Data wire is plugged into port 2 on the Arduino
