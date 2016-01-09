@@ -8,6 +8,7 @@
 #define mqttUser "admin"
 #define mqttPassword "redborder"
 #define mqttClientID  "ivanlabArduinoClient"
+#define mqttTopic "topic"
 
 // WiFi Parameters
 char ssid[] = "ivanlab";           // your network SSID (name) 
@@ -32,20 +33,34 @@ DeviceAddress insideThermometer;
 //Temperature in character format for publishing
 char charTemperature [20];
 
+// MQTT client provisioning
+ WiFiClient WiClient;
+ PubSubClient client(server, 1883, callback, WiClient);
 
 //function to handle incoming MQTT messeges
 void callback(char* topic, byte* payload, unsigned int length) {
   // handle message arrived
+  //serial.println("kk");
 }
 
- // MQTT client provisioning
- WiFiClient WiClient;
- PubSubClient client(server, 1883, callback, WiClient);
+// function to publish the temperature in a MQTT topic
+void publishTemperature (DeviceAddress deviceAddress) {
 
+  float tempC = sensors.getTempC(deviceAddress);
+  dtostrf(sensors.getTempC(deviceAddress),5,2,charTemperature) ;
+  
+  if (client.connect(mqttClientID, mqttUser, mqttPassword)) {
+    client.publish(mqttTopic,charTemperature);
+    // at the same time we can subscribe to get parameters from inTopic here:
+    // client.subscribe("inTopic");
+  }
+  else {
+    Serial.println("Cannot reach MQTT broker");
+  }
+} 
 
 // function to print the temperature for a device
-void printTemperature(DeviceAddress deviceAddress)
-{
+void printTemperature(DeviceAddress deviceAddress) {
   // method 2 - faster
   float tempC = sensors.getTempC(deviceAddress);
   Serial.print("Temp C: ");
@@ -54,26 +69,14 @@ void printTemperature(DeviceAddress deviceAddress)
   Serial.println(DallasTemperature::toFahrenheit(tempC)); // Converts tempC to Fahrenheit
 }
 
-// function to publish the temperature in a MQTT topic
-void publishTemperature (DeviceAddress deviceAddress)
-{
-  float tempC = sensors.getTempC(deviceAddress);
-  dtostrf(sensors.getTempC(deviceAddress),5,2,charTemperature) ;
-  client.publish("outTopic",charTemperature);
-  // at the same time we can subscribe to get parameters from inTopic here:
-  // client.subscribe("inTopic");
-  } 
-
 // function to print a OneWire device address
-void printAddress(DeviceAddress deviceAddress)
-{
+void printAddress(DeviceAddress deviceAddress) {
   for (uint8_t i = 0; i < 8; i++)
   {
     if (deviceAddress[i] < 16) Serial.print("0");
     Serial.print(deviceAddress[i], HEX);
   }
 }
-
 
 void setup() {
   
@@ -99,12 +102,7 @@ void setup() {
   }
   
   // Connect to the MQTT broker
-if (client.connect(mqttClientID, mqttUser, mqttPassword)) {
-    Serial.println("Connected to MQTT Broker ");
-  }
-  else {
-    Serial.println("Cannot reach MQTT server");
-  }
+
 
   // Initialize OneWire bus
   // locate devices on the bus
@@ -157,7 +155,6 @@ if (client.connect(mqttClientID, mqttUser, mqttPassword)) {
   Serial.print(sensors.getResolution(insideThermometer), DEC); 
   Serial.println();
 }
-
 
 void loop(void)
 { 
