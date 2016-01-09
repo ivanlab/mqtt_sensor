@@ -33,15 +33,15 @@ DeviceAddress insideThermometer;
 //Temperature in character format for publishing
 char charTemperature [20];
 
-// MQTT client provisioning
- WiFiClient WiClient;
- PubSubClient client(server, 1883, callback, WiClient);
-
 //function to handle incoming MQTT messeges
 void callback(char* topic, byte* payload, unsigned int length) {
   // handle message arrived
   //serial.println("kk");
 }
+
+// MQTT client provisioning
+ WiFiClient WiClient;
+ PubSubClient client(server, 1883, callback, WiClient);
 
 // function to publish the temperature in a MQTT topic
 void publishTemperature (DeviceAddress deviceAddress) {
