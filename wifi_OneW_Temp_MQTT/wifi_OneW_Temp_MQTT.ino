@@ -156,8 +156,7 @@ void setup() {
   Serial.println();
 }
 
-void loop(void)
-{ 
+void loop(void) { 
   // call sensors.requestTemperatures() to issue a global temperature 
   // request to all devices on the bus
   Serial.print("Requesting temperatures...");
