@@ -8,11 +8,11 @@
 #define mqttUser "admin"
 #define mqttPassword "redborder"
 #define mqttClientID  "ivanlabArduinoClient"
-#define mqttTopic "mqttdashboard/ivanlab"
+#define mqttTopic "rb_iot"
 
 byte mac[]    = {  0xDE, 0xED, 0xBA, 0xFE, 0xFE, 0xED };
-byte ip[]     = { 192, 168, 2, 119 };
-IPAddress server(212, 72, 74, 21); // Adress of the MQTT server
+byte ip[]     = { 10, 0, 30, 131 };
+IPAddress server (10, 0, 150, 38); // Adress of the MQTT server
 
 // Bus parameters
 #define ONE_WIRE_BUS 2   // Data wire is plugged into port 2 on the Arduino
