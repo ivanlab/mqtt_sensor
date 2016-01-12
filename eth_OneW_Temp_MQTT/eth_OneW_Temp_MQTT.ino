@@ -30,52 +30,6 @@ DeviceAddress insideThermometer;
 //Temperature in character format for publishing
 char charTemperature [20];
 
-//function to handle incoming MQTT messeges
-void callback(char* topic, byte* payload, unsigned int length) {
-  // handle message arrived
-  //serial.println("kk");
-}
-
-// MQTT client provisioning
- EthernetClient ethClient;
- PubSubClient client(server, 1883, callback, ethClient);
-
-// function to publish the temperature in a MQTT topic
-void publishTemperature (DeviceAddress deviceAddress) {
-
-  float tempC = sensors.getTempC(deviceAddress);
-  dtostrf(sensors.getTempC(deviceAddress),5,2,charTemperature) ;
-  
-  if (client.connect(mqttClientID)) {
-    client.publish(mqttTopic,charTemperature);
-    Serial.println("Published to MQTT broker");
-    // at the same time we can subscribe to get parameters from inTopic here:
-    // client.subscribe("inTopic");
-  }
-  else {
-    Serial.println("Cannot reach MQTT broker");
-  }
-} 
-
-// function to print the temperature for a device
-void printTemperature(DeviceAddress deviceAddress) {
-  // method 2 - faster
-  float tempC = sensors.getTempC(deviceAddress);
-  Serial.print("Temp C: ");
-  Serial.print(tempC);
-  Serial.print(" Temp F: ");
-  Serial.println(DallasTemperature::toFahrenheit(tempC)); // Converts tempC to Fahrenheit
-}
-
-// function to print a OneWire device address
-void printAddress(DeviceAddress deviceAddress) {
-  for (uint8_t i = 0; i < 8; i++)
-  {
-    if (deviceAddress[i] < 16) Serial.print("0");
-    Serial.print(deviceAddress[i], HEX);
-  }
-}
-
 void setup() {
   
   // initialize serial:
@@ -132,6 +86,56 @@ void loop(void) {
 
   delay(60000);
 }
+
+//function to handle incoming MQTT messeges
+void callback(char* topic, byte* payload, unsigned int length) {
+  // handle message arrived
+  //serial.println("kk");
+}
+
+// MQTT client provisioning
+ EthernetClient ethClient;
+ PubSubClient client(server, 1883, callback, ethClient);
+
+// function to publish the temperature in a MQTT topic
+void publishTemperature (DeviceAddress deviceAddress) {
+
+  float tempC = sensors.getTempC(deviceAddress);
+  dtostrf(sensors.getTempC(deviceAddress),5,2,charTemperature) ;
+  char jsonOut[100];
+  sprintf( jsonOut, "{\"iot_id\": \"Sensor_Ivanlab_1\", \"value\": \"%s\", \"monitor\": \"temperature\"}", charTemperature );
+  
+  if (client.connect(mqttClientID)) {
+    client.publish(mqttTopic,jsonOut);
+    Serial.println("Published to MQTT broker");
+    Serial.println(jsonOut);
+    // at the same time we can subscribe to get parameters from inTopic here:
+    // client.subscribe("inTopic");
+  }
+  else {
+    Serial.println("Cannot reach MQTT broker");
+  }
+} 
+
+// function to print the temperature for a device
+void printTemperature(DeviceAddress deviceAddress) {
+  // method 2 - faster
+  float tempC = sensors.getTempC(deviceAddress);
+  Serial.print("Temp C: ");
+  Serial.print(tempC);
+  Serial.print(" Temp F: ");
+  Serial.println(DallasTemperature::toFahrenheit(tempC)); // Converts tempC to Fahrenheit
+}
+
+// function to print a OneWire device address
+void printAddress(DeviceAddress deviceAddress) {
+  for (uint8_t i = 0; i < 8; i++)
+  {
+    if (deviceAddress[i] < 16) Serial.print("0");
+    Serial.print(deviceAddress[i], HEX);
+  }
+}
+
 
 
 
