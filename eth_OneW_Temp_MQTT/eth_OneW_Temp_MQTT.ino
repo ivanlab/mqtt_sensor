@@ -1,3 +1,9 @@
+
+// Temperature sensor using OneWire and push to MQTT
+// one sensor version
+// Jan 2016
+// Ivan
+
 #include <Ethernet.h>
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -135,7 +141,3 @@ void printAddress(DeviceAddress deviceAddress) {
     Serial.print(deviceAddress[i], HEX);
   }
 }
-
-
-
-
